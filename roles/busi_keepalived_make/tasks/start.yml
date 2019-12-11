@@ -1,0 +1,21 @@
+# 加入系统管理
+- name: "keepalived join system manager"
+  template:
+    src: keepalived.service.j2
+    dest: /usr/lib/systemd/system/keepalived.service
+    owner: root
+    group: root
+    mode: '644'
+  tags:
+    - keepalived_make
+
+# 启动程序
+- name: "keepalived server started"
+  service:
+    name: keepalived
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - keepalived_make
+

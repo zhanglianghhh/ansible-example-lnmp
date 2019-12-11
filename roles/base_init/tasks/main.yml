@@ -1,0 +1,9 @@
+- import_tasks: mirrors.yml
+- import_tasks: pkg_installed.yml
+- import_tasks: env_var.yml
+- import_tasks: bg_color.yml
+- import_tasks: alias_set.yml
+- import_tasks: sysctl_optimize.yml
+- import_tasks: user_www.yml
+- import_tasks: dir_create.yml
+

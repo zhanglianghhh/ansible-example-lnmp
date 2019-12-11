@@ -1,0 +1,38 @@
+# 如果机器不足，那么就不要使用 别名
+# 假如 172.16.1.183 有别名 db_master，那么在ansible的all中，会将172.16.1.183、db_master 识别为2台机器，而不是一台机器
+# 后果就是如果安装部署什么软件，那么同一台机器就会执行两次，导致错误产生。
+#########################
+
+# 业务组件分组
+## 方式1、主机 + 端口 + 密钥
+[manageservers]
+172.16.1.180:22
+
+[proxyservers]
+172.16.1.18[1:2]:22
+
+## 方式2：别名 + 主机 + 端口 + 密码
+[webservers]
+web01 ansible_ssh_host=172.16.1.183 ansible_ssh_port=22
+web02 ansible_ssh_host=172.16.1.184 ansible_ssh_port=22
+web03 ansible_ssh_host=172.16.1.185 ansible_ssh_port=22
+
+
+
+# 基础组件分组
+## 数据库组件分组
+[zabbixdbserver]
+172.16.1.180
+
+[dbservers]
+db_master  ansible_ssh_host=172.16.1.183
+db_slave01 ansible_ssh_host=172.16.1.184
+db_slave02 ansible_ssh_host=172.16.1.185
+
+[memservers]
+172.16.1.185
+
+## 基础业务组件分组
+[zabbixserver]
+172.16.1.180
+

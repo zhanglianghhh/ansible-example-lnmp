@@ -1,0 +1,17 @@
+  server {
+    listen       {{ web_port }};
+    server_name  127.0.0.1;
+    location / {
+      root   html;
+      index  index.html index.htm;
+    }
+
+
+    location ~* .*\.(php|php5)?$ {
+      root   html;
+      fastcgi_pass    127.0.0.1:9000;
+      fastcgi_index   index.php; 
+      include         fastcgi.conf;
+    }
+  }
+

@@ -1,0 +1,43 @@
+# zabbix server 配置
+# 注意该配置文件的权限问题
+- name: "zabbix server config and edit restarted"
+  template:
+    src: zabbix_server.conf.j2
+    dest: /etc/zabbix/zabbix_server.conf
+    owner: root
+    group: root
+    mode: '640'
+    backup: yes
+  notify: "zabbix server restart"
+  tags:
+    - zabbix_server
+
+# zabbix server 的 httpd 配置
+# 主要是修改了时区
+- name: "zabbix server httpd config and edit restarted"
+  template:
+    src: zabbix.conf.j2
+    dest: /etc/httpd/conf.d/zabbix.conf
+    owner: root
+    group: root
+    mode: '640'
+    backup: yes
+  notify: "zabbix server httpd restart"
+  tags:
+    - zabbix_server
+
+# 中文支持
+# wqy-microhei-fonts 为中文支持，zabbix自带的中文支持不好
+- name: "zabbix server already support china ?"
+  shell: . /etc/profile && . /etc/bashrc && ls -l /usr/share/zabbix/assets/fonts/graphfont.ttf | grep 'wqy-microhei' | wc -l
+  register: result_cn_support
+  changed_when: result_cn_support['stdout']|int == 0
+  tags:
+    - zabbix_server
+
+- name: "zabbix server support china"
+  shell: . /etc/profile && . /etc/bashrc && yum -y install wqy-microhei-fonts && cd /usr/share/zabbix/assets/fonts && mv graphfont.ttf graphfont.ttf_bak && ln -s /usr/share/fonts/wqy-microhei/wqy-microhei.ttc graphfont.ttf
+  when: result_cn_support['stdout']|int == 0
+  tags:
+    - zabbix_server
+

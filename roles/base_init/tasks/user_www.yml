@@ -1,0 +1,18 @@
+# 添加 www 用户  用于web服务
+- name: "system init add group www"
+  group:
+    name: www
+    gid: 1060
+  tags:
+    - base_init
+    - user_www
+
+- name: "system init add user www"
+  user:
+    name: www
+    uid: 1060
+    group: www
+  tags:
+    - base_init
+    - user_www
+

@@ -1,0 +1,25 @@
+# php ini 配置
+# /app/php/lib/php.ini 的权限为 -w----r-T
+- name: "php ini and edit restarted"
+  template:
+    src: php.ini.j2
+    dest: "{{ software_install_path }}/php/lib/php.ini"
+    owner: yun
+    group: yun
+    backup: yes
+  notify: "php server restart"
+  tags:
+    - php_make
+
+# php conf 配置
+- name: "php conf and edit restarted"
+  template:
+    src: php-fpm.conf.j2
+    dest: "{{ software_install_path }}/php/etc/php-fpm.conf"
+    owner: yun
+    group: yun
+    backup: yes
+  notify: "php server restart"
+  tags:
+    - php_make
+

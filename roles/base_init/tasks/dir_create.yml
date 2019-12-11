@@ -1,0 +1,24 @@
+# 软件包或文件存放路径
+- name: "system init package or file save dir"
+  file:
+    path: "{{ software_save_path }}"
+    owner: yun
+    group: yun
+    state: directory
+    recurse: yes
+  tags:
+    - base_init
+    - dir_create
+
+# 后期运维脚本存放路径
+- name: "system init devops shell save dir"
+  file:
+    path: "{{ devops_shell_path }}"
+    owner: yun
+    group: yun
+    state: directory
+    recurse: yes
+  tags:
+    - base_init
+    - dir_create
+

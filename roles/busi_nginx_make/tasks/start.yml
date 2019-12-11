@@ -1,0 +1,21 @@
+# 加入系统管理
+- name: "nginx join system manager"
+  template:
+    src: nginx.service.j2
+    dest: /usr/lib/systemd/system/nginx.service
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  tags:
+    - nginx_make
+
+# 启动程序
+- name: "nginx server started"
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags:
+    - nginx_make
+

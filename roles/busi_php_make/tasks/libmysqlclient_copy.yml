@@ -1,0 +1,11 @@
+# libmysqlclient 相关文件拷贝
+- name: "php libmysqlclient file copy"
+  copy:
+    src: libmysqlclient.so.18
+    dest: /usr/lib64/libmysqlclient.so.18
+    owner: root
+    group: root
+    mode: "755"
+  tags:
+    - php_make
+

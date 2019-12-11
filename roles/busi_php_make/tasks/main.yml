@@ -1,0 +1,7 @@
+- import_tasks: yum_pkg.yml
+- import_tasks: libiconv_install.yml
+- import_tasks: libmysqlclient_copy.yml
+- import_tasks: install.yml
+- import_tasks: config.yml
+- import_tasks: start.yml
+

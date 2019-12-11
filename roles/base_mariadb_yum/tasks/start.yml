@@ -1,0 +1,9 @@
+- name: "mariadb server started"
+  systemd:
+    name: mariadb
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - mariadb_server
+

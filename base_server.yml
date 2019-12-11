@@ -1,0 +1,28 @@
+---
+# 所有机器初始化
+- hosts: all
+  # 关闭 facts 变量
+  gather_facts: no
+  roles:
+    - base_init
+
+# mariadb 数据库 yum 安装---用于zabbix-server的数据库
+- hosts: zabbixdbserver
+  gather_facts: no
+  force_handlers: yes
+  roles:
+    - base_mariadb_yum
+
+# zabbix server 安装
+- hosts: zabbixserver
+  gather_facts: no
+  force_handlers: yes
+  roles:
+    - base_zabbix_server
+
+# zabbix agent 安装
+- hosts: all
+  force_handlers: yes
+  roles:
+    - base_zabbix_agent
+

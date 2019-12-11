@@ -1,0 +1,10 @@
+# 如果需要使用sasl, 也可以在安装 libmemcahced 前安装 cyrus-sasl-devel
+- name: "php memcached package install"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - cyrus-sasl-devel
+  tags:
+    - php_memcached_combine
+

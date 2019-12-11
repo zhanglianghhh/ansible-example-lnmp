@@ -1,0 +1,20 @@
+# 拷贝脚本
+- name: "keepalived crontab shell copy"
+  template:
+    src: keepalived_haproxy_monitor.sh.j2
+    dest: "{{ devops_shell_path }}/keepalived_haproxy_monitor.sh"
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  tags:
+    - keepalived_make
+
+# 部署定时任务脚本 脚本内容：根据反向代理进程的存在来判断是否停止或启动 keepalived 服务
+- name: "keepalived crontab create"
+  cron:
+    name: "keepalived crontab"
+    job: "sh {{ devops_shell_path }}/keepalived_haproxy_monitor.sh >/dev/null 2>&1"
+  tags:
+    - keepalived_make
+

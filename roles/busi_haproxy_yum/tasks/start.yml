@@ -1,0 +1,9 @@
+- name: "haproxy server started"
+  systemd:
+    name: haproxy
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - haproxy_server
+

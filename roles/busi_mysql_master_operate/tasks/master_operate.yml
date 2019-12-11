@@ -1,0 +1,33 @@
+# MySQL 主从配置   master 端操作
+
+# 主从用户配置
+## 是否有主从复制用户
+- name: "mysql master replication user already create ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "select user,host,password from mysql.user ;" | grep "{{ mysql_master_user }}" | wc -l
+  register: result_rep_user
+  changed_when: result_rep_user['stdout']|int == 0
+  tags:
+    - mysql_master
+
+- name: "mysql master replication user create"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "grant replication slave on *.* TO '{{ mysql_master_user }}'@'%' identified by '{{ mysql_master_pawd }}'; flush privileges;" 
+  when: result_rep_user['stdout']|int == 0
+  tags:
+    - mysql_master
+
+# 数据导出
+## 是否已经导出数据
+- name: "mysql master master_slave data already export ?"
+  shell: . /etc/profile && . /etc/bashrc && test -f {{ software_save_path }}/{{ mysql_master_info }} && test -f {{ software_save_path }}/{{ mysql_master_slave_data }} ; echo $?
+  register: result_data_export
+  changed_when: result_data_export['stdout']|int != 0
+  tags:
+    - mysql_master
+
+## 锁表、得到binlog的位置点  生成mysql_master.info文件  对主MySQL的数据库打包  解锁
+- name: "mysql master master_slave data export"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "flush table with read lock;" && echo "CHANGE MASTER TO MASTER_HOST='{{ ansible_eth0['ipv4']['address'] }}', MASTER_PORT=3306, MASTER_USER='{{ mysql_master_user }}',MASTER_PASSWORD='{{ mysql_master_pawd }}',MASTER_LOG_FILE='$(mysql -uroot -p{{ mysql_password }} -e "show master status;" | grep 'mysql-bin' | awk -F'\t' '{print $1}')',MASTER_LOG_POS=$(mysql -uroot -p{{ mysql_password }} -e "show master status;" | grep 'mysql-bin' | awk -F'\t' '{print $2}');" > {{ software_save_path }}/{{ mysql_master_info }} && mysqldump -uroot -p{{ mysql_password }} -A -B --events | gzip > {{ software_save_path }}/{{ mysql_master_slave_data }} && mysql -uroot -p{{ mysql_password }} -e "unlock table;"
+  when: result_data_export['stdout']|int != 0
+  tags:
+    - mysql_master
+

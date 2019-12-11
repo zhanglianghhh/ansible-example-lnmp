@@ -1,0 +1,3 @@
+- import_tasks: copy_file.yml
+- import_tasks: slave_operate.yml
+

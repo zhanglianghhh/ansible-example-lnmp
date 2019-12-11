@@ -1,0 +1,26 @@
+# libiconv 安装
+
+# 安装包拷贝
+- name: "php libiconv install packge copy"
+  copy:
+    src: libiconv-{{ libiconv_version }}.tar.gz
+    dest: "{{ software_save_path }}"
+    owner: root
+    group: root
+  tags:
+    - php_make
+
+- name: "php libiconv already install ?"
+  shell: . /etc/profile && . /etc/bashrc && test -f /usr/local/libiconv/bin/iconv ; echo $?
+  register: result_install
+  changed_when: result_install['stdout']|int != 0
+  tags:
+    - php_make
+
+- name: "php libiconv install"
+  # 加载环境变量；进入软件包存放路径，删除已解压目录（如果存在的话），解压包；编译；构造；安装
+  shell: . /etc/profile && . /etc/bashrc && (cd {{ software_save_path }} && rm -fr libiconv-{{ libiconv_version }} && tar xf libiconv-{{ libiconv_version }}.tar.gz) && cd {{ software_save_path }}/libiconv-{{ libiconv_version }}/ && ./configure --prefix=/usr/local/libiconv && make || (sed -i '/^_GL_WARN_ON_USE (gets, /i \{{ libiconv_insert }}' srclib/stdio.h && sed -i '/^_GL_WARN_ON_USE (gets, /a \{{ libiconv_append }}' srclib/stdio.h && make && make install)
+  when: result_install['stdout']|int != 0
+  tags:
+    - php_make
+

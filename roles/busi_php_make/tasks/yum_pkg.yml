@@ -1,0 +1,19 @@
+- name: "php package install"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - zlib-devel
+    - libxml2-devel
+    - libjpeg-turbo-devel
+    - freetype-devel
+    - libpng-devel
+    - gd-devel
+    - libcurl-devel
+    - libxslt-devel
+    - libmcrypt-devel
+    - mhash
+    - mcrypt
+  tags:
+    - php_make
+

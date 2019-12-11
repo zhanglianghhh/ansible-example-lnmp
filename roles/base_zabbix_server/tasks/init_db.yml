@@ -1,0 +1,29 @@
+# 初始化数据库
+
+- name: "zabbix server already initial database ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "select user,host,password from mysql.user where user='{{ zabbix_db_user }}'; " | grep -v 'user' | wc -l
+  register: result_init_db
+  changed_when: result_init_db['stdout']|int == 0
+  tags:
+    - zabbix_server
+
+- name: "zabbix server initial database"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "create database {{ zabbix_db_name }} character set utf8 collate utf8_bin; grant all privileges on {{ zabbix_db_name }}.* to {{ zabbix_db_user }}@localhost identified by '{{ zabbix_db_pawd }}'; grant all privileges on {{ zabbix_db_name }}.* to {{ zabbix_db_user }}@'%' identified by '{{ zabbix_db_pawd }}'; flush privileges;"
+  when: result_init_db['stdout']|int == 0
+  tags:
+    - zabbix_server  
+
+# 数据库SQL数据导入
+- name: "zabbix server already import initial schema and data ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -u{{ zabbix_db_user }} -p{{ zabbix_db_pawd }} -e "use {{ zabbix_db_name }}; show tables;" | grep -v 'Tables_in' | wc -l
+  register: result_init_data
+  changed_when: result_init_data['stdout']|int == 0
+  tags:
+    - zabbix_server
+
+- name: "zabbix server import initial schema and data"
+  shell: . /etc/profile && . /etc/bashrc && zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -u{{ zabbix_db_user }} -p{{ zabbix_db_pawd }} {{ zabbix_db_name }}
+  when: result_init_data['stdout']|int == 0
+  tags:
+    - zabbix_server
+

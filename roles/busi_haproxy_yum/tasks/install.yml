@@ -1,0 +1,9 @@
+# yum 安装 haproxy
+- name: "haproxy package install"
+  yum:
+    name:
+      - haproxy
+    state: present
+  tags:
+    - haproxy_server
+

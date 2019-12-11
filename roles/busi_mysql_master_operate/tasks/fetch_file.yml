@@ -1,0 +1,20 @@
+# 获取 MySQL的 mysql_master.info 和 mysql_master_slave_data.sql.gz
+
+## 获取 mysql_master.info 文件
+- name: "mysql master fetch {{ mysql_master_info }}"
+  fetch:
+    src: "{{ software_save_path }}/{{ mysql_master_info }}"
+    dest: "{{ software_save_path }}/"
+    flat: yes
+  tags:
+    - mysql_master
+
+## 获取 mysql_master_slave_data.sql.gz 文件
+- name: "mysql master fetch {{ mysql_master_slave_data }}"
+  fetch:
+    src: "{{ software_save_path }}/{{ mysql_master_slave_data }}"
+    dest: "{{ software_save_path }}/"
+    flat: yes
+  tags:
+    - mysql_master
+

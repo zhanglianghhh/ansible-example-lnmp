@@ -1,0 +1,25 @@
+# 数据库 root 原始密码
+mysql_password: 123456
+
+# MySQL 数据库版本
+mysql_version: 5.6.22
+
+# MySQL 编译参数
+mysql_compile: "cmake . -DCMAKE_INSTALL_PREFIX={{ software_install_path }}/mysql-{{ mysql_version }} -DMYSQL_DATADIR={{ software_install_path }}/mysql-{{ mysql_version }}/data -DMYSQL_UNIX_ADDR={{ software_install_path }}/mysql-{{ mysql_version }}/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_FEDERATED_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_PARTITION_STORAGE_ENGINE=1 -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 -DWITH_ZLIB=bundled -DWITH_SSL=bundled -DENABLED_LOCAL_INFILE=1 -DWITH_READLINE=1 -DWITH_EMBEDDED_SERVER=1 -DWITH_DEBUG=0"
+
+# MySQL test库的用户信息 用户主从测试
+mysql_test_user: user_test
+mysql_test_pawd: 111111
+
+# MySQL 主从复制账号
+mysql_master_user: rep
+
+# MySQL 主从复制账号密码
+mysql_master_pawd: rep123
+
+# MySQL 主从master.info文件
+mysql_master_info: mysql_master.info
+# MySQL 主从 master 数据库导出文件
+mysql_master_slave_sql: mysql_master_slave_data.sql
+mysql_master_slave_data: mysql_master_slave_data.sql.gz
+

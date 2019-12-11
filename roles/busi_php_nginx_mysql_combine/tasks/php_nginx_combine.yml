@@ -1,0 +1,12 @@
+# php 和 Nginx 整合
+- name: "php nginx combine"
+  template:
+    src: nginx_php.conf.j2
+    dest: "{{ nginx_online_path }}/nginx_php.conf"
+    owner: yun
+    group: yun
+    mode: 644
+  notify: "nginx server reload"
+  tags:
+    - php_nginx_mysql_combine
+

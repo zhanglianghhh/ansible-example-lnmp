@@ -1,0 +1,4 @@
+- import_tasks: php_info.yml
+- import_tasks: php_mysql_combine.yml
+- import_tasks: php_nginx_combine.yml
+

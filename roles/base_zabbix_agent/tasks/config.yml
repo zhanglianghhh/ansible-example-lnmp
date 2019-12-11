@@ -1,0 +1,14 @@
+# zabbix agent 配置
+# 注意该配置文件的权限问题
+- name: "zabbix agent config and edit restarted"
+  template:
+    src: zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "zabbix agent restart"
+  tags:
+    - zabbix_agent
+

@@ -1,0 +1,11 @@
+- name: "mysql need package install"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - ncurses-devel
+    - libaio-devel
+    - cmake
+  tags:
+    - mysql_make
+

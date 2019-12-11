@@ -1,0 +1,28 @@
+# 软件安装
+
+# 安装包拷贝
+- name: "keepalived install packge copy"
+  copy:
+    src: keepalived-{{ keepalived_version }}.tar.gz
+    dest: "{{ software_save_path }}"
+    owner: root
+    group: root
+  tags:
+    - keepalived_make
+
+# 判断是否已经安装
+- name: "keepalived already install ?"
+  shell: . /etc/profile && . /etc/bashrc && test -f {{ software_install_path }}/keepalived/sbin/keepalived ; echo $?
+  register: result_install
+  changed_when: result_install['stdout']|int != 0
+  tags:
+    - keepalived_make
+
+# 如果没有安装，则：解压、编译、构造、安装
+- name: "keepalived package uncompress, compile, make and make install"
+  # 加载环境变量；进入软件包存放路径，删除已解压目录（如果存在的话），解压包；编译；构造；安装
+  shell: . /etc/profile && . /etc/bashrc && (cd {{ software_save_path }} && rm -fr keepalived-{{ keepalived_version }} && tar xf keepalived-{{ keepalived_version }}.tar.gz) && cd {{ software_save_path }}/keepalived-{{ keepalived_version }}/ && ./configure --prefix={{ software_install_path }}/keepalived-{{ keepalived_version }} && make && make install && ln -s {{ software_install_path }}/keepalived-{{ keepalived_version }} {{ software_install_path }}/keepalived
+  when: result_install['stdout']|int != 0
+  tags:
+    - keepalived_make
+

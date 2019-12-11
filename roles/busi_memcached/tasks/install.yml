@@ -1,0 +1,7 @@
+- name: "memcached package install"
+  yum:
+    name: memcached
+    state: present
+  tags:
+    - memcached_server
+

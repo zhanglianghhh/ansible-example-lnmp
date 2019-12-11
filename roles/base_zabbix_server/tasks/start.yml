@@ -1,0 +1,18 @@
+- name: "zabbix server started"
+  systemd:
+    name: zabbix-server
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - zabbix_server
+
+- name: "zabbix server httpd started"
+  systemd:
+    name: httpd
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - zabbix_server
+

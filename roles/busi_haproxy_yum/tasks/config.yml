@@ -1,0 +1,13 @@
+# haproxy 配置
+- name: "haproxy config and edit reloaded"
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "haproxy server reload"
+  tags:
+    - haproxy_server
+

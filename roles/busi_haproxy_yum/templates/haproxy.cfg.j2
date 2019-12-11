@@ -1,0 +1,52 @@
+# 全局参数的设置
+global
+  log         127.0.0.1 local2
+  chroot      /var/lib/haproxy
+  pidfile     /var/run/haproxy.pid
+  maxconn     50000
+  user        www
+  group       www
+  daemon
+  nbproc 1
+  stats socket /var/lib/haproxy/stats
+
+#默认参数设置
+defaults
+  mode      http
+  log       global
+  option    httplog
+  option    http-server-close
+  retries   3
+  timeout   http-request    10s
+  timeout   queue           1m
+  timeout   connect         10s
+  timeout   client          1m
+  timeout   server          1m
+  timeout   http-keep-alive 10s
+  timeout   check           10s
+  maxconn   3000                 #每个进程可用的最大连接数
+
+#开启Haproxy Status状态监控，增加验证
+listen stats
+  mode http
+  bind 0.0.0.0:8888
+  stats enable
+  stats refresh 30s
+  stats uri     /haproxy-status 
+  stats auth    haproxy:haproxy
+
+#前端设置
+frontend http_front
+  bind *:80
+  mode http
+  option httplog
+  default_backend backend_www_example_com
+  
+#后端设置
+backend backend_www_example_com
+  option forwardfor header X-REAL-IP
+  balance roundrobin
+  server web-node1  {{ web_node1 }}:{{ web_port }} check inter 2000 rise 30 fall 15 weight 30
+  server web-node2  {{ web_node2 }}:{{ web_port }} check inter 2000 rise 30 fall 15 weight 30
+  server web-node3  {{ web_node3 }}:{{ web_port }} check inter 2000 rise 30 fall 15 weight 30
+

@@ -1,0 +1,44 @@
+# nginx 相关信息
+## nginx 版本
+nginx_version: 1.14.2
+
+## nginx 线上配置存放路径
+nginx_online_path: "{{ software_install_path }}/nginx/conf/online/"
+
+## nginx 项目存放路径
+nginx_project_path: "{{ software_install_path }}/nginx/html/"
+
+
+
+# php 相关信息
+## php 版本
+php_version: 5.5.32
+
+## libiconv 版本
+libiconv_version: 1.14
+
+## php 编译参数
+### 可以在变量中引用变量
+php_compile: "./configure --prefix={{ software_install_path }}/php-{{ php_version }} --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-iconv-dir=/usr/local/libiconv --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-gettext --enable-mbregex --enable-fpm --enable-mbstring --with-gd --with-mcrypt --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-zip --enable-soap --enable-short-tags --enable-static --with-xsl --with-fpm-user=www --with-fpm-group=www --enable-ftp --enable-opcache=no"
+
+## libiconv 编译之后的修改，不然make会出错  参考博文：https://blog.csdn.net/yuan1125/article/details/51050102
+libiconv_insert: "#if defined(__GLIBC__) && !defined(__UCLIBC__) && !__GLIBC_PREREQ(2, 16)"
+libiconv_append: '#endif'
+
+
+
+# php nginx mysql 整合相关信息
+mysql_host01: 172.16.1.183
+mysql_host02: 172.16.1.184
+mysql_host03: 172.16.1.185
+
+
+
+# php memcached 整合相关信息
+memcached_host: 172.16.1.185
+
+## libmemcached 版本信息
+libmemcached_version: 1.0.18
+## php_ext_memcached 版本信息
+php_ext_memcached_version: 2.2.0
+

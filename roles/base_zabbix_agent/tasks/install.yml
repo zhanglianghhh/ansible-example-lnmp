@@ -1,0 +1,13 @@
+# 这里安装包直接使用阿里云的，因此实际可以省略 repository.yml 这步
+# yum 安装 zabbix agent
+- name: "zabbix agent package install"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - "{{ zabbix_agent }}"
+    # 默认安转的包来源于国外，很有可能安装失败，因此这里使用阿里云提供的安装包
+    #- zabbix-agent
+  tags:
+    - zabbix_agent
+

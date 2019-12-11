@@ -1,0 +1,9 @@
+- name: "zabbix agent started"
+  systemd:
+    name: zabbix-agent
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - zabbix_agent
+

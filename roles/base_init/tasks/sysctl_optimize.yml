@@ -1,0 +1,33 @@
+# 内核参数修改
+- name: "system init sysctl local_port_range"
+  sysctl:
+    name: net.ipv4.ip_local_port_range
+    value: "10000 65000"
+  tags:
+    - base_init
+    - sysctl_optimize
+
+- name: "system init sysctl fs.file-max"
+  sysctl:
+    name: fs.file-max
+    value: '2000000'
+  tags:
+    - base_init
+    - sysctl_optimize
+
+- name: "system init sysctl ip_forward"
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+  tags:
+    - base_init
+    - sysctl_optimize
+
+- name: "system init sysctl vm.swappiness"
+  sysctl:
+    name: vm.swappiness
+    value: "0"
+  tags:
+    - base_init
+    - sysctl_optimize
+

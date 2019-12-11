@@ -1,0 +1,51 @@
+# MySQL 主从配置   slave 端操作
+
+# 将master的导出数据导入slave
+## 是否已经导入master端的数据
+- name: "mysql slave master_slave data already import ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "select user,host,password from mysql.user ;" | grep "{{ mysql_master_user }}" | wc -l
+  register: result_data_import
+  changed_when: result_data_import['stdout']|int == 0
+  tags:
+    - mysql_slave
+
+- name: "mysql slave master_slave data import"
+  shell: . /etc/profile && . /etc/bashrc && cd {{ software_save_path }} && cp -a {{ mysql_master_slave_data }} {{ mysql_master_slave_data }}_bak && gzip -d {{ mysql_master_slave_data }} && mv {{ mysql_master_slave_data }}_bak {{ mysql_master_slave_data }} && mysql -uroot -p{{ mysql_password }} < {{ mysql_master_slave_sql }}
+  when: result_data_import['stdout']|int == 0
+  tags:
+    - mysql_slave
+
+## 数据导入后，需要重启MySQL服务
+- name: "mysql slave data import later restart"
+  service:
+    name: mysqld
+    state: restarted
+  when: result_data_import['stdout']|int == 0
+  tags:
+    - mysql_slave
+
+# 配置master.info文件 与 开启从库开关
+## 是否开启主从配置
+- name: "mysql slave master_slave already config ?"
+  shell: . /etc/profile && . /etc/bashrc && (mysql -uroot -p{{ mysql_password }} -e "show slave status \G;" | grep 'Slave_IO_Running.*Yes$') && (test -f $(mysql -uroot -p{{ mysql_password }} -e "show slave status \G" | grep 'Master_Info_File' | awk -F ' ' '{print $2}' ))  ; echo $?
+  register: result_master_slave_config
+  changed_when: result_master_slave_config['stdout']|int != 0
+  tags:
+    - mysql_slave
+
+## 为了防止干扰，对 MySQL 重启一次
+- name: "mysql slave master_slave restart before config"
+  service:
+    name: mysqld
+    state: restarted
+  when: result_master_slave_config['stdout']|int != 0
+  tags:
+    - mysql_slave
+
+## 实现主从配置
+- name: "mysql slave master_slave config"
+  shell: . /etc/profile && . /etc/bashrc && cd {{ software_save_path }} && awk '{print "mysql -uroot -p{{ mysql_password }} -e\"", $0 ,"\""}' {{ mysql_master_info }} | bash && mysql -uroot -p{{ mysql_password }} -e "start slave;"
+  when: result_master_slave_config['stdout']|int != 0
+  tags:
+    - mysql_slave
+

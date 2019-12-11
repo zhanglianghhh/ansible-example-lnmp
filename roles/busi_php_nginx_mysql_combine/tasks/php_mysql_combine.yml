@@ -1,0 +1,11 @@
+# php 和 MySQL 整合
+- name: "php mysql combine"
+  template:
+    src: test_mysql.php.j2
+    dest: "{{ nginx_project_path }}/test_mysql.php"
+    owner: yun
+    group: yun
+    mode: 644
+  tags:
+    - php_nginx_mysql_combine
+

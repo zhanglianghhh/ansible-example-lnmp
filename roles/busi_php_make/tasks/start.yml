@@ -1,0 +1,24 @@
+# 判断是否加入系统管理
+- name: "php already join system manager ?"
+  shell: . /etc/profile && . /etc/bashrc && chkconfig --list | grep 'php-fpm' ; echo $?
+  register: result_sys_manager
+  changed_when: result_sys_manager['stdout']|int != 0
+  tags:
+    - php_make
+
+# 加入系统管理
+- name: "php join system manager"
+  shell: . /etc/profile && . /etc/bashrc && cd {{ software_save_path }}/php-{{ php_version }}/ && cp -a sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm && chmod 755 /etc/init.d/php-fpm && chkconfig --add php-fpm && chkconfig php-fpm off
+  when: result_sys_manager['stdout']|int != 0
+  tags:
+    - php_make
+
+# 启动程序
+- name: "php server started"
+  service:
+    name: php-fpm
+    state: started
+    enabled: yes
+  tags:
+    - php_make
+

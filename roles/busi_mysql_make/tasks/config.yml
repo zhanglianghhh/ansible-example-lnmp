@@ -1,0 +1,28 @@
+# mysql 配置文件配置
+- name: "mysql config and edit restarted"
+  template:
+    src: mysql-{{ mysql_version }}_my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "mysql server restart"
+  tags:
+    - mysql_make
+
+# 判断数据库是否初始化
+- name: "mysql database already init ?"
+  shell: "test -d {{ software_install_path }}/mysql/data/mysql ; echo $?"
+  register: result_db_init
+  changed_when: result_db_init['stdout']|int != 0
+  tags:
+    - mysql_make
+
+# mysql 数据库初始化配置
+- name: "mysql database init"
+  shell: . /etc/profile && . /etc/bashrc && cd {{ software_install_path }}/mysql && ./scripts/mysql_install_db --basedir={{ software_install_path }}/mysql/ --datadir={{ software_install_path }}/mysql/data/ --user=mysql
+  when: result_db_init['stdout']|int != 0
+  tags:
+    - mysql_make
+

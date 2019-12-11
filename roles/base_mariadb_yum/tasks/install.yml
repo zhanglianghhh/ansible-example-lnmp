@@ -1,0 +1,11 @@
+# yum 安装 mariadb
+- name: "mariadb package install"
+  yum:
+    name:
+      - mariadb-libs-5.5.64-1.el7.x86_64
+      - mariadb-5.5.64-1.el7.x86_64
+      - mariadb-server-5.5.64-1.el7.x86_64
+    state: present
+  tags:
+    - mariadb_server
+

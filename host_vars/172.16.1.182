@@ -1,0 +1,4 @@
+# keepalived.conf 变量信息
+State: BACKUP
+Priority: 50
+

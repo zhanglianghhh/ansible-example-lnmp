@@ -1,0 +1,8 @@
+# zabbix 镜像仓库指定
+- name: "zabbix repository"
+  yum:
+    name: "{{ zabbix_rep }}"
+    state: present
+  tags:
+    - zabbix_server
+

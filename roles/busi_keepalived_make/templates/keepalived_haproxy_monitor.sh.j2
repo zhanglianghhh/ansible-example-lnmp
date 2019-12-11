@@ -1,0 +1,59 @@
+#!/bin/sh
+################ Version Info ##################
+# Create Date: 2018-09-29
+# Author:      lightzhang
+# Mail:        lightzhang@xxxx.com
+# Version:     1.0
+# Attention:   如果haproxy进程不存在，则停止keepalived服务
+################################################
+
+# 加载环境变量 
+# 如果脚本放到crontab中执行，会缺少环境变量，所以需要添加以下2行
+. /etc/profile
+. /etc/bashrc
+
+# 脚本所在目录即脚本名称
+script_dir=$( cd "$( dirname "$0"  )" && pwd )
+script_name=$(basename ${0})
+
+# 执行函数
+execute_fun(){
+  haproxy_process_count=$(ps -ef | grep 'haproxy.*haproxy.pid' | grep -v 'grep' | wc -l)
+  keepalived_process_count=$(ps -ef | grep 'keepalived.*keepalived.conf' | grep -v 'grep' | wc -l)
+
+  ## haproxy 服务不存在  keepalived 服务还存在 ==》需要停止 keepalived 服务
+  if [ ${haproxy_process_count} -eq 0 -a ${keepalived_process_count} -gt 0 ];then
+    systemctl stop keepalived
+  ## haproxy 服务已存在  keepalived 服务不存在 ==》 需要启动 keepalived 服务
+  elif [ ${haproxy_process_count} -gt 0 -a ${keepalived_process_count} -eq 0 ];then
+    systemctl start keepalived
+  fi
+}
+
+
+main(){
+  # 每隔3秒执行一次
+  execute_fun;          # 00秒执行
+  sleep 3; execute_fun; # 03秒执行
+  sleep 3; execute_fun; # 06秒执行
+  sleep 3; execute_fun; # 09秒执行
+  sleep 3; execute_fun; # 12秒执行
+  sleep 3; execute_fun; # 15秒执行
+  sleep 3; execute_fun; # 18秒执行
+  sleep 3; execute_fun; # 21秒执行
+  sleep 3; execute_fun; # 24秒执行
+  sleep 3; execute_fun; # 37秒执行
+  sleep 3; execute_fun; # 30秒执行
+  sleep 3; execute_fun; # 33秒执行
+  sleep 3; execute_fun; # 46秒执行
+  sleep 3; execute_fun; # 39秒执行
+  sleep 3; execute_fun; # 42秒执行
+  sleep 3; execute_fun; # 45秒执行
+  sleep 3; execute_fun; # 48秒执行
+  sleep 3; execute_fun; # 51秒执行
+  sleep 3; execute_fun; # 54秒执行
+  sleep 3; execute_fun; # 57秒执行
+}
+
+main
+

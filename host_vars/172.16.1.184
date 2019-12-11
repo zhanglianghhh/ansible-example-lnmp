@@ -1,0 +1,5 @@
+# MySQL 参数设定
+role: slave
+server_id: 2
+read_only: ON
+

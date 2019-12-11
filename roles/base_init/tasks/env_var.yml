@@ -1,0 +1,18 @@
+# 添加或修改环境变量
+# lineinfile 模块中的 line 不支持列表，因此必须单个添加
+- name: "system init env var hosttimeformat"
+  lineinfile:
+    path: /etc/bashrc
+    line: 'export HISTTIMEFORMAT="%F %T $(whoami) "'
+  tags:
+    - base_init
+    - env_var
+
+- name: "system init env var logger"
+  lineinfile:
+    path: /etc/bashrc
+    line: export PROMPT_COMMAND='{ msg=$(history 1 | { read x y; echo $y; });logger "[euid=$(whoami)]":$(who am i):[`pwd`]"$msg"; }'
+  tags:
+    - base_init
+    - env_var
+

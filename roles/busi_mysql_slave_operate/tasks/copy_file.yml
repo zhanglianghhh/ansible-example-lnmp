@@ -1,0 +1,22 @@
+# 将主 MySQL 的 master.info 和 数据库信息拷贝到从 MySQL 上
+
+## 拷贝 mysql_master.info 文件
+- name: "mysql slave copy {{ mysql_master_info }}"
+  copy:
+    src: "{{ software_save_path }}/{{ mysql_master_info }}"
+    dest: "{{ software_save_path }}"
+    owner: root
+    group: root
+  tags:
+    - mysql_slave
+
+## 拷贝 mysql_master_slave_data.sql.gz 文件
+- name: "mysql slave copy {{ mysql_master_slave_data }}"
+  copy:
+    src: "{{ software_save_path }}/{{ mysql_master_slave_data }}"
+    dest: "{{ software_save_path }}"
+    owner: root
+    group: root
+  tags:
+    - mysql_slave
+

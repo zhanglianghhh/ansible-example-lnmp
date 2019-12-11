@@ -1,0 +1,5 @@
+# MySQL 参数设定
+role: master
+server_id: 1
+read_only: OFF
+

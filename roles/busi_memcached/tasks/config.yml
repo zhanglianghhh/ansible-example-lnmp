@@ -1,0 +1,12 @@
+- name: "memcached config and edit restarted"
+  template:
+    src: memcached.j2
+    dest: /etc/sysconfig/memcached
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "memcached server restart"
+  tags:
+    - memcached_server
+

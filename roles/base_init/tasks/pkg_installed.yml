@@ -1,0 +1,32 @@
+- name: "system init pkg installed"
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - bash-completion
+    - screen
+    - pcre
+    - pcre-devel
+    - openssl
+    - openssl-devel
+    - nfs-utils
+    - rpcbind
+    - lrzsz
+    - sysstat
+    - nmap
+    - nc
+    - tree
+    - telnet
+    - dos2unix
+    - deltarpm
+    # 编译包经常使用
+    - gcc
+    - gcc-c++
+    - glibc
+    - make
+    - autoconf
+  tags:
+    - base_init
+    - pkg_installed
+

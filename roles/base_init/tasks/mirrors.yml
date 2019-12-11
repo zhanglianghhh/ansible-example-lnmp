@@ -1,0 +1,29 @@
+# 从腾讯云获取镜像源信息 
+# https://mirrors.cloud.tencent.com
+ 
+# CentOS-Base.repo
+- name: "system init CentOS 7 CentOS-Base.repo"
+  get_url:
+    url: http://mirrors.cloud.tencent.com/repo/centos7_base.repo
+    dest: /etc/yum.repos.d/CentOS-Base.repo
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    checksum: md5:c3283b4970f45e779d48e3beb446e2ab
+  tags:
+    - base_init
+
+# epel 源信息
+- name: "system init CentOS 7 epel.repo"
+  get_url:
+    url: http://mirrors.cloud.tencent.com/repo/epel-7.repo
+    dest: /etc/yum.repos.d/epel.repo
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    checksum: md5:397e9bc1252cb605992c015af001d6c7
+  tags:
+    - base_init
+

@@ -1,0 +1,5 @@
+- import_tasks: yum_pkg.yml
+- import_tasks: libmemcached_install.yml
+- import_tasks: php_ext_memcached_install.yml
+- import_tasks: php_memcached_combine.yml
+

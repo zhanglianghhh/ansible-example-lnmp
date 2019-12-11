@@ -1,0 +1,11 @@
+# php 信息查看
+- name: "php test_info.php copy"
+  template:
+    src: test_info.php.j2
+    dest: "{{ nginx_project_path }}/test_info.php"
+    owner: yun
+    group: yun
+    mode: 644
+  tags:
+    - php_nginx_mysql_combine
+

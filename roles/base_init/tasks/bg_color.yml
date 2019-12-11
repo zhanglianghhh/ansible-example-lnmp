@@ -1,0 +1,8 @@
+# 用户名、主机添加背景色，用于生产环境，这样可以减少人为的误操作。
+- name: "system init add background color for user@hostname"
+  lineinfile:
+    path: /etc/bashrc
+    line: export PS1="\[\e[37;40m\][\[\e[37;41m\]\u\[\e[37;41m\]@\h\[\e[37;40m\] \W\[\e[0m\]]\\$ "
+  tags:
+    - base_init
+

@@ -1,0 +1,13 @@
+# 配置文件
+- name: "keepalived config and edit restarted"
+  template:
+    src: keepalived.conf.j2
+    dest: "{{ software_install_path }}/keepalived/etc/keepalived/keepalived.conf"
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "keepalived server restart"
+  tags:
+    - keepalived_make
+

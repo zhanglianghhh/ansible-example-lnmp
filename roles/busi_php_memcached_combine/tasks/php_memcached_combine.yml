@@ -1,0 +1,12 @@
+# php 和 memcached 整合
+- name: "php memcached combine"
+  template:
+    src: test_memcached.php.j2
+    dest: "{{ nginx_project_path }}/test_memcached.php"
+    owner: yun
+    group: yun
+    mode: 644
+  notify: "php server restart"
+  tags:
+    - php_memcached_combine
+

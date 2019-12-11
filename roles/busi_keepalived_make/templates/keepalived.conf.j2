@@ -1,0 +1,39 @@
+! Configuration File for keepalived
+
+global_defs {
+   notification_email {
+     acassen@firewall.loc
+   }
+   notification_email_from Alexandre.Cassen@firewall.loc
+   smtp_server 192.168.200.1
+   smtp_connect_timeout 30
+   # 路由标识，在一个局域网里面应该是唯一的；默认为 LVS_DEVEL
+   router_id {{ Router_Id }}
+}
+
+# 这是一个VRRP实例，里面定义了keepalived的主备状态、接口、优先级、认证和IP信息  默认为 VI_1
+vrrp_instance {{ Vrrp_Instance }} {
+    # 定义VRRP的角色
+    # 指定该节点为主节点，备用节点设置为BACKUP
+    state {{ State }}
+    # 定义使用的接口，由于是模拟提供对外访问，因此这里是 eth1
+    interface {{ Interface }}
+    # 虚拟路由ID标识，一组的keepalived配置中主备都是设置一致
+    virtual_router_id 51
+    # 主节点的优先级，数值在1~254，注意从节点必须比主节点的优先级别低
+    # BACKUP 可设为 50
+    priority {{ Priority }}
+    # 组播信息发送间隔，两个节点需一致
+    advert_int 1
+    # 设置验证信息，两个节点需一致
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    # 指定虚拟IP，两个节点需设置一样
+    # 定义虚拟IP地址，可以配置多个IP地址，这里我定义为10.0.0.170，绑定了eth1的网络接口【模拟外网访问】，虚拟接口eth1:1.
+    virtual_ipaddress {
+        {{ Virtual_Ip }}/24 dev {{ Interface }} label {{ Interface }}:1
+    }
+}
+

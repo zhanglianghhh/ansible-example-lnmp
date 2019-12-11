@@ -1,0 +1,35 @@
+# nginx 创建目录，业务使用
+- name: "nginx online business use dir"
+  file:
+    path: "{{ software_install_path }}/nginx/conf/online"
+    owner: yun
+    group: yun
+    state: directory
+    recurse: yes
+  tags:
+    - nginx_make
+
+# nginx 创建目录，业务下线使用
+- name: "nginx offline business use dir"
+  file:
+    path: "{{ software_install_path }}/nginx/conf/offline"
+    owner: yun
+    group: yun
+    state: directory
+    recurse: yes
+  tags:
+    - nginx_make
+
+# nginx 配置文件
+- name: "nginx config and edit reloaded"
+  template:
+    src: nginx.conf.j2
+    dest: "{{ software_install_path }}/nginx/conf/nginx.conf"
+    owner: yun
+    group: yun
+    mode: '644'
+    backup: yes
+  notify: "nginx server reload"
+  tags:
+    - nginx_make
+

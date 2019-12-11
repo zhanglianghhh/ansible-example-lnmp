@@ -1,0 +1,9 @@
+# keepalived 版本
+keepalived_version: 1.4.2
+
+# keepalived.conf 变量信息【部分信息在 host_vars 下】
+Router_Id: haproxy_ha
+Vrrp_Instance: haproxy_ha
+Interface: eth1
+Virtual_Ip: 10.0.0.170
+

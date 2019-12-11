@@ -1,0 +1,47 @@
+# 安装memcached扩展
+
+# 安装包拷贝
+- name: "php_ext_memcached install packge copy"
+  copy:
+    src: php_ext_memcached-{{ php_ext_memcached_version }}.tgz
+    dest: "{{ software_save_path }}"
+    owner: root
+    group: root
+  tags:
+    - php_memcached_combine
+
+# 判断是否已经安装
+- name: "php_ext_memcached already install ?"
+  shell: . /etc/profile && . /etc/bashrc && find {{ software_install_path }}/php/lib/php/extensions -type f | grep 'memcached.so$' ; echo $?
+  register: result_install
+  changed_when: result_install['stdout']|int != 0
+  tags:
+    - php_memcached_combine
+
+# 如果没有安装MySQL，则：解压、编译、构造、安装
+- name: "php_ext_memcached package uncompress, compile, make and make install"
+  # 加载环境变量；进入软件包存放路径，删除已解压目录（如果存在的话），解压包；编译；构造；安装
+  # php_ext_memcached-2.2.0.tgz 解压后为 memcached-2.2.0 目录 和 package.xml 文件
+  # 在 {{ software_save_path }}/memcached-{{ php_ext_memcached_version }}/ 目录执行 /app/php/bin/phpize 用于生成 configure 配置文件
+  shell: . /etc/profile && . /etc/bashrc && (cd {{ software_save_path }} && rm -fr memcached-{{ php_ext_memcached_version }} && rm -f package.xml && tar xf php_ext_memcached-{{ php_ext_memcached_version }}.tgz) && cd {{ software_save_path }}/memcached-{{ php_ext_memcached_version }}/ && {{ software_install_path }}/php/bin/phpize && ./configure --with-php-config={{ software_install_path }}/php/bin/php-config --enable-sasl --with-libmemcached-dir=/usr/local/libmemcached && make && make install 
+  when: result_install['stdout']|int != 0
+  tags:
+    - php_memcached_combine
+
+# 添加扩展信息
+# /app/php/bin/php -m | grep memcached  可查看是否安装 该扩展
+- name: "php_ext_memcached add extension note"
+  lineinfile:
+    path: "{{ software_install_path }}/php/lib/php.ini"
+    line: ; ## add extension ##
+  tags:
+    - php_memcached_combine
+
+- name: "php_ext_memcached add extension info"
+  lineinfile:
+    path: "{{ software_install_path }}/php/lib/php.ini"
+    line: extension=memcached.so
+  notify: "php server restart"
+  tags:
+    - php_memcached_combine
+

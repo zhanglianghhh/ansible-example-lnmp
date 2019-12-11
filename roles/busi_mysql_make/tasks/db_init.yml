@@ -1,0 +1,60 @@
+# 对数据库用户进行初始化
+# 注意需要加载环境变量
+
+## 对 root localhost 用户添加密码
+- name: "mysql user root:localhost already have password ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "show databases;" ; echo $?
+  register: result_pwd_update
+  changed_when: result_pwd_update['stdout']|int != 0
+  tags:
+    - mysql_make
+
+- name: "mysql user root:localhost set password"
+  shell: . /etc/profile && . /etc/bashrc && mysqladmin -uroot password {{ mysql_password }}
+  when: result_pwd_update['stdout']|int != 0
+  tags:
+    - mysql_make
+
+## 对所有 root 用户添加密码
+- name: "mysql all root user already have password ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "select user,host,password from mysql.user where user='root' and password='';" | grep -v 'user' | wc -l
+  register: result_root_count
+  changed_when: result_root_count['stdout']|int > 0
+  tags:
+    - mysql_make
+
+- name: "mysql all root user set password"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "update mysql.user set password=password({{ mysql_password }}) where user='root' and password=''; flush privileges;"
+  when: result_root_count['stdout']|int > 0
+  tags:
+    - mysql_make
+
+# 删除多有的用户
+- name: "mysql empty user already not exist ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "select user,host,password from mysql.user where user='';" | grep -v 'user' | wc -l
+  register: result_emptyuser_count
+  changed_when: result_emptyuser_count['stdout']|int > 0
+  tags:
+    - mysql_make
+
+- name: "mysql delete empty user"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "delete from mysql.user where user=''; flush privileges;"
+  when: result_emptyuser_count['stdout']|int > 0
+  tags:
+    - mysql_make
+
+# 判断用于test库的账号是否存在
+- name: "mysql test DB user already exist ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -u{{ mysql_test_user }} -hlocalhost -p{{ mysql_test_pawd }} -e "show databases;" && mysql -u{{ mysql_test_user }} -h{{ ansible_eth0['ipv4']['address'] }} -p{{ mysql_test_pawd }} -e "show databases;" ; echo $?
+  register: result_testuser_init
+  changed_when: result_testuser_init['stdout']|int != 0
+  tags:
+    - mysql_make
+
+# 给 test 库创建用户和密码  用于主从测试  使用 root 用户是没法测试主从的【因为root用户在只读情况下也能写入数据】
+- name: "mysql create user for test DB"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mysql_password }} -e "grant all privileges on test.* to {{ mysql_test_user }}@'localhost' identified by '{{ mysql_test_pawd }}'; grant all privileges on test.* to {{ mysql_test_user }}@'%' identified by '{{ mysql_test_pawd }}'; flush privileges;"
+  when: result_testuser_init['stdout']|int != 0
+  tags:
+    - mysql_make
+

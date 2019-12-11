@@ -1,0 +1,46 @@
+# mariadb 数据库用户初始化
+
+## 对 root localhost 用户添加密码
+- name: "mariadb user root:localhost already have password ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "show databases;" ; echo $?
+  register: result_pwd_update
+  changed_when: result_pwd_update['stdout']|int != 0
+  tags:
+    - mariadb_server
+
+- name: "mariadb user root:localhost set password"
+  shell: . /etc/profile && . /etc/bashrc && mysqladmin -uroot password {{ mariadb_password }}
+  when: result_pwd_update['stdout']|int != 0
+  tags:
+    - mariadb_server
+
+## 对所有 root 用户添加密码
+- name: "mariadb all root user already have password ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "select user,host,password from mysql.user where user='root' and password='';" | grep -v 'user' | wc -l
+  register: result_root_count
+  changed_when: result_root_count['stdout']|int > 0
+  tags:
+    - mariadb_server
+
+- name: "mariadb all root user set password"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "update mysql.user set password=password({{ mariadb_password }}) where user='root' and password=''; flush privileges;"
+  #debug:
+  #  msg: "{{ result_root_count }}"
+  when: result_root_count['stdout']|int > 0
+  tags:
+    - mariadb_server
+
+# 删除多有的用户
+- name: "mariadb empty user already not exist ?"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "select user,host,password from mysql.user where user='';" | grep -v 'user' | wc -l
+  register: result_emptyuser_count
+  changed_when: result_emptyuser_count['stdout']|int > 0
+  tags:
+    - mariadb_server
+
+- name: "mariadb delete empty user"
+  shell: . /etc/profile && . /etc/bashrc && mysql -uroot -p{{ mariadb_password }} -e "delete from mysql.user where user=''; flush privileges;"
+  when: result_emptyuser_count['stdout']|int > 0
+  tags:
+    - mariadb_server
+

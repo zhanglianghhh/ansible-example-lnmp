@@ -1,0 +1,24 @@
+# 判断是否加入系统管理
+- name: "mysql server already join system manager ?"
+  shell: . /etc/profile && . /etc/bashrc && chkconfig --list | grep 'mysqld' ; echo $?
+  register: result_sys_manager
+  changed_when: result_sys_manager['stdout']|int != 0
+  tags:
+    - mysql_make
+
+# 加入系统管理
+- name: "mysql server join system manager"
+  shell: . /etc/profile && . /etc/bashrc && cd {{ software_install_path }}/mysql && cp -a support-files/mysql.server /etc/init.d/mysqld && chmod 755 /etc/init.d/mysqld && chkconfig --add mysqld && chkconfig mysqld off
+  when: result_sys_manager['stdout']|int != 0
+  tags:
+    - mysql_make
+
+# 启动程序
+- name: "mysql server started"
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+  tags:
+    - mysql_make
+

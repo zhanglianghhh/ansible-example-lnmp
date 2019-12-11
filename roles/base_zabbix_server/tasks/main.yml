@@ -1,0 +1,6 @@
+- import_tasks: repository.yml
+- import_tasks: install.yml
+- import_tasks: init_db.yml
+- import_tasks: config.yml
+- import_tasks: start.yml
+

@@ -1,0 +1,29 @@
+# 从阿里云获取镜像源信息 
+# https://developer.aliyun.com/mirror
+ 
+# CentOS-Base.repo
+- name: "system init CentOS 7 CentOS-Base.repo"
+  get_url:
+    url: http://mirrors.aliyun.com/repo/Centos-7.repo
+    dest: /etc/yum.repos.d/CentOS-Base.repo
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    checksum: md5:13151789a512213f1695a5b427b1a9ab
+  tags:
+    - base_init
+
+# epel 源信息
+- name: "system init CentOS 7 epel.repo"
+  get_url:
+    url: http://mirrors.aliyun.com/repo/epel-7.repo
+    dest: /etc/yum.repos.d/epel.repo
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    checksum: md5:bddf35db56cf6be9190fdabeae71c801
+  tags:
+    - base_init
+

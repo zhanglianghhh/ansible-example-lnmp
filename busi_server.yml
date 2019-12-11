@@ -1,0 +1,45 @@
+---
+# 业务数据库安装
+- hosts: dbservers
+  force_handlers: yes
+  roles:
+    - busi_mysql_make
+
+# 主从数据库-主操作
+- hosts: 172.16.1.183
+  roles:
+    - busi_mysql_master_operate
+
+# 主动数据库-从操作
+- hosts: 172.16.1.184,172.16.1.185
+  roles:
+    - busi_mysql_slave_operate 
+
+# memcached 安装
+- hosts: memservers
+  gather_facts: no
+  force_handlers: yes
+  roles:
+    - busi_memcached
+
+# web 服务安装
+- hosts: webservers
+  force_handlers: yes
+  roles:
+    - busi_nginx_make
+    - busi_php_make
+    - busi_php_nginx_mysql_combine
+    - busi_php_memcached_combine
+
+# 反向代理服务安装
+- hosts: proxyservers
+  force_handlers: yes
+  roles:
+    - busi_haproxy_yum
+
+# keepalived 服务
+- hosts: keepalivedserver
+  force_handlers: yes
+  roles:
+    - busi_keepalived_make
+

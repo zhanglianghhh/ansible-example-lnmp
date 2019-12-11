@@ -1,0 +1,13 @@
+# mariadb 配置
+- name: "mariadb config and edit restarted"
+  template:
+    src: mariadb_my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+  notify: "mariadb server restart"
+  tags:
+    - mariadb_server
+

@@ -1,0 +1,9 @@
+- name: "memcached server started"
+  systemd:
+    name: memcached
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  tags:
+    - memcached_server
+
