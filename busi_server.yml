@@ -6,12 +6,12 @@
     - busi_mysql_make
 
 # 主从数据库-主操作
-- hosts: 172.16.1.183
+- hosts: dbservers_master
   roles:
     - busi_mysql_master_operate
 
 # 主动数据库-从操作
-- hosts: 172.16.1.184,172.16.1.185
+- hosts: dbservers_slave
   roles:
     - busi_mysql_slave_operate 
 
